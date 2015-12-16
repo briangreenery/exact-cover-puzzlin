@@ -57,11 +57,20 @@ function makeBoard(size) {
 var input = parseInput();
 
 // console.log(makeBoard(input.size));
-console.log(JSON.stringify(input)); 
+// console.log(JSON.stringify(input)); 
 
-// function foo(row) {
-//   var start = 0;
-//   var end = input.size - ;
+function foo(row, index, start) {
+  if (index === row.length) {
+    return;
+  }
   
-//   for (var i = 0; i < )
-// }
+  var block = row[index];
+  
+  for (var i = start; i <= input.size - block.totalSpace; i += 1) {
+    console.log('start block ' + index + ' at ' + (i + 1));
+    foo(row, index + 1, i + block.spaceFor);
+  }
+}
+
+console.log(JSON.stringify(input.rows[7]));
+foo(input.rows[7], 0, 0);
