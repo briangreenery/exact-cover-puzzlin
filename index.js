@@ -72,5 +72,5 @@ function foo(row, index, start) {
   }
 }
 
-console.log(JSON.stringify(input.rows[7]));
-foo(input.rows[7], 0, 0);
+console.log(JSON.stringify(input.rows[1]));
+foo(input.rows[1], 0, 0);
