@@ -34,7 +34,14 @@ function parseInput() {
   
   input.columns = input.columns.map(function(column) {
     return column.split(' ').map(Number);
-  });
+  }).map(function(col) {
+    return col.map(function(block, index) {
+      return {
+        spaceFor: spaceFor(col, index),
+        totalSpace: totalSpace(col, index) 
+      };
+    });
+  })
   
   return input;
 }
@@ -60,17 +67,29 @@ var input = parseInput();
 // console.log(JSON.stringify(input)); 
 
 function foo(row, index, start) {
+  var total = 0;
+  
   if (index === row.length) {
-    return;
+    return 1;
   }
   
   var block = row[index];
   
   for (var i = start; i <= input.size - block.totalSpace; i += 1) {
-    console.log('start block ' + index + ' at ' + (i + 1));
-    foo(row, index + 1, i + block.spaceFor);
+    total += foo(row, index + 1, i + block.spaceFor);
   }
+  
+  return total;
 }
 
-console.log(JSON.stringify(input.rows[1]));
-foo(input.rows[1], 0, 0);
+var total = 0;
+
+input.columns.forEach(function(row) {
+  var sum = foo(row, 0, 0);
+  console.log(row);
+  console.log(sum);
+  total += sum;
+});
+
+console.log('----------');
+console.log(total);
