@@ -26,6 +26,7 @@ function parseInput() {
   }).map(function(row) {
     return row.map(function(block, index) {
       return {
+        size: row[index], 
         spaceFor: spaceFor(row, index),
         totalSpace: totalSpace(row, index) 
       };
@@ -37,6 +38,7 @@ function parseInput() {
   }).map(function(col) {
     return col.map(function(block, index) {
       return {
+        size: col[index],
         spaceFor: spaceFor(col, index),
         totalSpace: totalSpace(col, index) 
       };
@@ -64,32 +66,39 @@ function makeBoard(size) {
 var input = parseInput();
 
 // console.log(makeBoard(input.size));
-// console.log(JSON.stringify(input)); 
+// console.log(JSON.stringify(input));
 
-function foo(row, index, start) {
-  var total = 0;
-  
+function set(arr, start, size) {
+  for (var i = start; i < start + size; i += 1) {
+    arr[i] = 1;
+  }
+}
+
+function clear(arr, start, size) {
+  for (var i = start; i < start + size; i += 1) {
+    arr[i] = 0;
+  }
+}
+
+function foo(row, index, start, marks) {
   if (index === row.length) {
-    return 1;
+    console.log(marks);
+    return;
   }
   
   var block = row[index];
   
   for (var i = start; i <= input.size - block.totalSpace; i += 1) {
-    total += foo(row, index + 1, i + block.spaceFor);
+    set(marks, i, block.size);
+    foo(row, index + 1, i + block.spaceFor, marks);
+    clear(marks, i, block.size);
   }
-  
-  return total;
 }
 
-var total = 0;
+var marks = [];
+for (var i = 0; i < 25; i += 1) {
+  marks.push(0);
+}
 
-input.columns.forEach(function(row) {
-  var sum = foo(row, 0, 0);
-  console.log(row);
-  console.log(sum);
-  total += sum;
-});
-
-console.log('----------');
-console.log(total);
+console.log(input.rows[0]);
+foo(input.rows[0], 0, 0, marks);
