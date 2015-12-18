@@ -52,21 +52,85 @@ function parseInput() {
   return input;
 }
 
+function Cell() {
+  var cell  = {};
+  
+  // The list links.
+  cell.left = cell;
+  cell.right = cell;
+  cell.up = cell;
+  cell.down = cell;
+  
+  // A pointer to the column header.
+  cell.col = undefined;
+  
+  // The size of the column. This is only valid for the header.
+  cell.size = 0;
+  
+  // Info about the constraint.
+  cell.constraint = 0;
+  
+  // Info about the choice.
+  cell.choice = 0;
+  
+  return cell;
+}
+
 function Cover(input) {
   var rows = [];
   var cols = [];
   var squares = [];
   
-  var matrix = [];
+  var constraints = [];
   var choices = [];
   
   function addConstraint(name) {
-    matrix.push({name: name, choices: []});
-    return matrix.length - 1;
+    constraints.push(name);
+    
+    var cell = Cell();
+    cell.col = cell;
+    cell.constraint = constraints.length - 1;
+    return cell;
+  }
+  
+  function addChoice(column, choice) {
+    // Create the new cell.
+    var cell = Cell();
+    cell.col = column;
+    cell.constraint = column.constraint;
+    cell.choice = choice;
+    
+    if (choice === undefined) {
+      throw new Error('what');
+    }
+    
+    // Link it to the end of column.
+    cell.up = column.up;
+    cell.up.down = cell;
+    cell.down = column;
+    cell.down.up = cell;
+    
+    return cell;
   }
   
   function getSquare(x, y) {
     return squares[x + input.size * y];
+  }
+  
+  function linkRow(cells) {
+    for (var i = 0; i < cells.length - 1; i += 1) {
+      cells[i].right = cells[i + 1];
+      
+      if (cells[i].right !== cells[i + 1]) {
+        console.log(cells[i + 1]);
+        console.log('what');
+      }
+      
+      cells[i].right.left = cells[i];
+    }
+    
+    cells[cells.length - 1].right = cells[0];
+    cells[cells.length - 1].right.left = cells[cells.length - 1];
   }
   
   function init() {
@@ -89,41 +153,49 @@ function Cover(input) {
  
   var methods = {};
   
-  methods.addRowChoice = function(row, squares) {
+  methods.addRowChoice = function(row, squares) {    
     // Add the choice.
-    choices.push({name: 'row ' + row + ': ' + squares.join('')});
+    choices.push('row ' + row + ': ' + squares.join(''));
     var choice = choices.length - 1;
     
-    // Fulfill the row constraint.
-    matrix[rows[row]].choices.push(choice);
+    var cells = [];
+        
+    // Fulfill the row constraint.    
+    cells.push(addChoice(rows[row], choice));
     
     // For each *filled* square, fulfill the square constraint.
     for (var x = 0; x < input.size; x += 1) {
       if (squares[x] === 1) {
-        matrix[getSquare(x, row)].choices.push(choice);
+        cells.push(addChoice(getSquare(x, row), choice));
       }
     }
+    
+    // Link the row.
+    linkRow(cells);
   };
   
   methods.addColChoice = function(col, squares) {
     // Add the choice.
-    choices.push({name: 'col ' + col + ': ' + squares.join('')});
+    choices.push('col ' + col + ': ' + squares.join(''));
     var choice = choices.length - 1;
     
+    var cells = [];
+    
     // Fulfill the col constraint.
-    matrix[cols[col]].choices.push(choice);
+    cells.push(addChoice(cols[col], choice));
     
     // For each *unfilled* square, fulfill the square constraint.
     for (var y = 0; y < input.size; y += 1) {
       if (squares[y] === 0) {
-        matrix[getSquare(col, y)].choices.push(choice);
+        cells.push(addChoice(getSquare(col, y), choice));
       }
     }
+    
+    // Link the row.
+    linkRow(cells);
   };
   
   methods.debug = function() {
-    console.log(matrix.length.toString() + ' constraints');
-    console.log(choices.length.toString() + ' choices');
   };
   
   init();
