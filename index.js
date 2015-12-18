@@ -216,17 +216,6 @@ function Cover(input) {
     linkRow(cells);
   };
   
-  methods.debug = function() {
-    var cell = header.right;
-    
-    while (cell !== header) {
-      console.log(constraints[cell.constraint] + ': ' + cell.size +
-        ' choice' + (cell.size !== 1 ? 's' : '') + '.');
-      
-      cell = cell.right;
-    }
-  };
-  
   function chooseColumn() {
     var cell = header.right;
     
