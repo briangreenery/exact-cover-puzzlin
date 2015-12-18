@@ -112,6 +112,8 @@ function Cover(input) {
     cell.down = column;
     cell.down.up = cell;
     
+    column.size += 1;
+    
     return cell;
   }
   
@@ -218,7 +220,9 @@ function Cover(input) {
     var cell = header.right;
     
     while (cell !== header) {
-      console.log(constraints[cell.constraint]);
+      console.log(constraints[cell.constraint] + ': ' + cell.size +
+        ' choice' + (cell.size !== 1 ? 's' : '') + '.');
+      
       cell = cell.right;
     }
   };
