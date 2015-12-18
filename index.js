@@ -227,6 +227,95 @@ function Cover(input) {
     }
   };
   
+  function chooseColumn() {
+    var cell = header.right;
+    
+    var minSize = cell.size;
+    var minCell = cell;
+    
+    while (cell !== header) {
+      if (cell.size < minSize) {
+        minSize = cell.size;
+        minCell = cell;
+      }
+      
+      cell = cell.right;
+    }
+    
+    return minCell;
+  }
+  
+  function cover(column) {
+    column.right.left = column.left;
+    column.left.right = column.right;
+
+    for (var i = column.down; i !== column; i = i.down) {
+      for (var j = i.right; j !== i; j = j.right) {      
+        j.down.up = j.up;
+        j.up.down = j.down;
+    
+        j.col.size -= 1;
+      }
+    }
+  }
+  
+  function uncover(column) {
+    for (var i = column.up; i !== column; i = i.up) {
+      for (var j = i.left; j !== i; j = j.left) {
+        j.down.up = j;
+        j.up.down = j;
+
+        j.col.size += 1;
+      }
+    }
+    
+    column.right.left = column;
+    column.left.right = column;
+  }
+  
+  function search(solution) {
+    var column = chooseColumn();
+    
+    if (column === header) {
+      return true;
+    }
+    
+    if (column.size === 0) {
+      return false;
+    }
+    
+    cover(column);
+    
+    for (var r = column.down; r !== column; r = r.down) {
+      solution.push(r);
+      
+      for (var j = r.right; j !== r; j = j.right) {
+        cover(j.col);
+      }
+      
+      if (search(solution)) {
+        return true;
+      }
+      
+      solution.pop();
+      for (var j = r.left; j !== r; j = j.left) {
+        uncover(j.col);
+      }
+    }
+    
+    uncover(column);
+    return false;
+  };
+  
+  methods.dance = function() {
+    var solution = [];
+    if (search(solution)) {
+      console.log(solution);
+    } else {
+      console.log('no solution found');
+    }
+  }
+  
   init();
   return methods;
 }
@@ -312,4 +401,4 @@ input.cols.forEach(function(block, index) {
   });
 });
 
-cover.debug();
+cover.dance();
