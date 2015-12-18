@@ -275,8 +275,6 @@ function Cover(input) {
   
   function search(solution) {
     var column = chooseColumn();
-    console.log('choosing column ' + constraints[column.constraint]);
-    console.log(column.size);
     
     if (column === header) {
       return true;
@@ -311,11 +309,13 @@ function Cover(input) {
   
   methods.dance = function() {
     var solution = [];
-    if (search(solution)) {
-      console.log(solution);
-    } else {
+    if (!search(solution)) {
       console.log('no solution found');
     }
+    
+    solution.forEach(function(cell) {
+      console.log(choices[cell.choice]);
+    });
   }
   
   init();
@@ -403,4 +403,4 @@ input.cols.forEach(function(block, index) {
   });
 });
 
-cover.debug();
+cover.dance();
