@@ -4,13 +4,11 @@
   * {
     box-sizing: border-box;
   }
-  
   .cell {
     display: inline-block;
     width: 15px;
     height: 15px;
   }
-  
   .filled {
     background-color: #000;
   }
@@ -18,7 +16,7 @@
 </head>
 <body>
   <div id="board"></div>
-    <script>
+  <script>
     var solution = [
       '1111111011100010101111111',
       '1000001011011000001000001',
@@ -52,16 +50,11 @@
     solution.forEach(function(row) {
       html += '<div class="row">';
       row.split('').forEach(function(cell) {
-        if (cell === '1') {
-          html += '<div class="filled cell"></div>';
-        } else {
-          html += '<div class="cell"></div>';
-        }
+        var className = (cell === '1') ? 'filled cell' : 'cell'; 
+        html += '<div class="' + className + '"></div>';
       });
       html += '</div>';
     });
-    
-    console.log(html);
     
     document.getElementById('board').innerHTML = html;
   </script>
