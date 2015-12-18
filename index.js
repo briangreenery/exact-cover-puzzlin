@@ -275,6 +275,8 @@ function Cover(input) {
   
   function search(solution) {
     var column = chooseColumn();
+    console.log('choosing column ' + constraints[column.constraint]);
+    console.log(column.size);
     
     if (column === header) {
       return true;
@@ -365,7 +367,7 @@ function isValidRow(row, squares) {
 
 function isValidCol(col, squares) {
   for (var y = 0; y < input.size; y += 1) {
-    if (squares[y] === 0 && isPreset(y, col)) {
+    if (squares[y] === 0 && isPreset(col, y)) {
       return false;
     }
   }
@@ -401,4 +403,4 @@ input.cols.forEach(function(block, index) {
   });
 });
 
-cover.dance();
+cover.debug();
