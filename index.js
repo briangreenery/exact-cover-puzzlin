@@ -84,6 +84,8 @@ function Cover(input) {
   var constraints = [];
   var choices = [];
   
+  var header = undefined;
+  
   function addConstraint(name) {
     constraints.push(name);
     
@@ -134,21 +136,38 @@ function Cover(input) {
   }
   
   function init() {
-    var i, j;
+    var i, j, cell;
     
+    var cells = [];
+    
+    header = Cell();
+    cells.push(header);
+    
+    // Add the row constraint headers.
     for (i = 0; i < input.size; i += 1) {
-      rows.push(addConstraint('row ' + i));
+      cell = addConstraint('row ' + i);
+      cells.push(cell);
+      rows.push(cell);
     }
     
+    // Add the column constraint headers.
     for (i = 0; i < input.size; i += 1) {
-      cols.push(addConstraint('col ' + i));
+      cell = addConstraint('col ' + i);
+      cells.push(cell);
+      cols.push(cell);
     }
     
+    // Add the square constraint headers.
     for (i = 0; i < input.size; i += 1) {
       for (j = 0; j < input.size; j += 1) {
-        squares.push(addConstraint('square ' + j + ', ' + i));
+        cell = addConstraint('square ' + j + ', ' + i);
+        cells.push(cell);
+        squares.push(cell);
       }
     }
+    
+    // Link the column row.
+    linkRow(cells);
   }
  
   var methods = {};
@@ -196,6 +215,12 @@ function Cover(input) {
   };
   
   methods.debug = function() {
+    var cell = header.right;
+    
+    while (cell !== header) {
+      console.log(constraints[cell.constraint]);
+      cell = cell.right;
+    }
   };
   
   init();
