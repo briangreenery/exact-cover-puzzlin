@@ -43,7 +43,11 @@ function parseInput() {
         sizeWithTrailing: sizeWithTrailing(col, index) 
       };
     });
-  })
+  });
+  
+  input.preset = input.preset.map(function(row) {
+    return row.split(' ').filter(function(x) { return x.length !== 0; }).map(Number);
+  });
   
   return input;
 }
@@ -61,8 +65,8 @@ function Cover(input) {
     return matrix.length - 1;
   }
   
-  function getSquareConstraint(x, y) {
-    return matrix[squares[x + input.size * y]];
+  function getSquare(x, y) {
+    return squares[x + input.size * y];
   }
   
   function init() {
@@ -96,7 +100,7 @@ function Cover(input) {
     // For each *filled* square, fulfill the square constraint.
     for (var x = 0; x < input.size; x += 1) {
       if (squares[x] === 1) {
-        getSquareConstraint(x, row).choices.push(choice);
+        matrix[getSquare(x, row)].choices.push(choice);
       }
     }
   };
@@ -112,13 +116,14 @@ function Cover(input) {
     // For each *unfilled* square, fulfill the square constraint.
     for (var y = 0; y < input.size; y += 1) {
       if (squares[y] === 0) {
-        getSquareConstraint(col, y).choices.push(choice);
+        matrix[getSquare(col, y)].choices.push(choice);
       }
     }
   };
   
   methods.debug = function() {
-    console.log(JSON.stringify(matrix, null, '  '));
+    console.log(matrix.length.toString() + ' constraints');
+    console.log(choices.length.toString() + ' choices');
   };
   
   init();
@@ -154,6 +159,30 @@ function enumChoices(blocks, index, start, squares, fn) {
   }
 }
 
+function isPreset(x, y) {
+  return input.preset[y].indexOf(x) !== -1;
+}
+
+function isValidRow(row, squares) {
+  for (var x = 0; x < input.size; x += 1) {
+    if (squares[x] === 0 && isPreset(x, row)) {
+      return false;
+    }
+  }
+  
+  return true;
+}
+
+function isValidCol(col, squares) {
+  for (var y = 0; y < input.size; y += 1) {
+    if (squares[y] === 0 && isPreset(y, col)) {
+      return false;
+    }
+  }
+  
+  return true;
+}
+
 function initSquares() {
   var squares = [];
   
@@ -168,13 +197,17 @@ var squares = initSquares();
 
 input.rows.forEach(function(block, index) {
   enumChoices(block, 0, 0, squares, function(squares) {
-    cover.addRowChoice(index, squares);
+    if (isValidRow(index, squares)) {
+      cover.addRowChoice(index, squares);
+    }
   });
 });
 
 input.cols.forEach(function(block, index) {
   enumChoices(block, 0, 0, squares, function(squares) {
-    cover.addColChoice(index, squares);
+    if (isValidCol(index, squares)) {
+      cover.addColChoice(index, squares);
+    }
   });
 });
 
