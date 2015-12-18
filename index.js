@@ -311,21 +311,22 @@ function Cover(input) {
     var solution = [];
     if (!search(solution)) {
       console.log('no solution found');
+      return undefined;
     }
     
     var rows = [];
     for (var i = 0; i < 25; i += 1) {
-      rows.push('');
+      rows.push([]);
     }
     
     solution.forEach(function(cell) {
       var match = choices[cell.choice].match(/row (\d+): (.*)/);
       if (match) {
-        rows[parseInt(match[1])] = match[2];
+        rows[parseInt(match[1])] = match[2].split('');
       }
     });
     
-    console.log(rows.join('\n'));
+    return rows;
   }
   
   init();
@@ -413,4 +414,79 @@ input.cols.forEach(function(block, index) {
   });
 });
 
-cover.dance();
+var solution = cover.dance();
+
+console.log(solution.map(function(row) {
+  return row.join('');
+}).join('\n'));
+
+function getRow(arr, row) {
+  return arr[row];
+}
+
+function getCol(arr, col) {
+  var result = [];
+  
+  for (var i = 0; i < input.size; i += 1) {
+    result.push(arr[i][col]);
+  }
+  
+  return result;
+}
+
+function getRuns(arr) {
+  var result = [];
+  var count = 0;
+  
+  arr.forEach(function(cell) {
+    if (cell === '1') {
+      count += 1;
+    } else if (count !== 0) {
+      result.push(count);
+      count = 0;
+    }
+  });
+  
+  if (count !== 0) {
+    result.push(count);
+  }
+  
+  return result;
+}
+
+function isCorrect(arr, constraint) {
+  var actual = getRuns(arr);
+  var expected = constraint.map(function(cell) {
+    return cell.size;
+  });
+  
+  if (actual.length !== expected.length) {
+    return false;
+  }
+  
+  for (var i = 0; i < expected.length; i += 1) {
+    if (actual[i] !== expected[i]) {
+      return false;
+    }
+  }
+  
+  return true;
+}
+
+function prettyConstraint(constraint) {
+  return constraint.map(function(cell) {
+    return cell.size;
+  }).join(', ');
+}
+
+for (var i = 0; i < input.size; i += 1) {
+  if (!isCorrect(getRow(solution, i), input.rows[i])) {
+    console.log('row ' + i + ': ' + getRow(solution, i).toString() + ' FAILS ' + prettyConstraint(input.rows[i]));
+  }
+}
+
+for (var i = 0; i < input.size; i += 1) {
+  if (!isCorrect(getCol(solution, i), input.cols[i])) {
+    console.log('col ' + i + ': ' + getCol(solution, i).toString() + ' FAILS ' + prettyConstraint(input.cols[i]));
+  }
+}
