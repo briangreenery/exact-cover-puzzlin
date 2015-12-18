@@ -296,6 +296,11 @@ function Cover(input) {
     return false;
   };
   
+  methods.logMatrix = function() {
+    console.log(constraints.length.toString() + ' constraints.');
+    console.log(choices.length.toString() + ' choices.');
+  }
+  
   methods.dance = function() {
     var solution = [];
     if (!search(solution)) {
@@ -403,6 +408,8 @@ input.cols.forEach(function(block, index) {
   });
 });
 
+cover.logMatrix();
+console.log('Solving...');
 var solution = cover.dance();
 
 console.log(solution.map(function(row) {
