@@ -313,9 +313,19 @@ function Cover(input) {
       console.log('no solution found');
     }
     
+    var rows = [];
+    for (var i = 0; i < 25; i += 1) {
+      rows.push('');
+    }
+    
     solution.forEach(function(cell) {
-      console.log(choices[cell.choice]);
+      var match = choices[cell.choice].match(/row (\d+): (.*)/);
+      if (match) {
+        rows[parseInt(match[1])] = match[2];
+      }
     });
+    
+    console.log(rows.join('\n'));
   }
   
   init();
