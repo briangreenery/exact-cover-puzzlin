@@ -48,7 +48,7 @@
     var html = '';
     
     solution.forEach(function(row) {
-      html += '<div class="row">';
+      html += '<div>';
       row.split('').forEach(function(cell) {
         var className = (cell === '1') ? 'filled cell' : 'cell'; 
         html += '<div class="' + className + '"></div>';
