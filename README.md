@@ -21,6 +21,9 @@ the constraints? Eventually I realized that:
 The program comes to a solution in about 30 seconds on my computer. The file
 `solution.html` can be opened to view the solution in a nicer format.
 
+The code is pretty sloppy joe because it's was developed experimentally as I
+was solving the problem. Sorry about that.
+
 ##### TLDR
 
     $ node index.js
