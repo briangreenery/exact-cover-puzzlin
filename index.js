@@ -124,12 +124,6 @@ function Cover(input) {
   function linkRow(cells) {
     for (var i = 0; i < cells.length - 1; i += 1) {
       cells[i].right = cells[i + 1];
-      
-      if (cells[i].right !== cells[i + 1]) {
-        console.log(cells[i + 1]);
-        console.log('what');
-      }
-      
       cells[i].right.left = cells[i];
     }
     
